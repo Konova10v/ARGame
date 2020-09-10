@@ -10,9 +10,19 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDelegate {
 
     @IBOutlet weak var sceneView: ARSCNView!
+    
+    @IBOutlet weak var timerLabel: UILabel!
+    @IBOutlet weak var scoreLabel: UILabel!
+    
+    var score = 0
+    var player: AVAudioPlayer?
+    
+    var seconds = 60
+    var timer = Timer()
+    var isTimerRunning = false
     
     //MARK: - Buttons
     @IBAction func onAxeButton(_ sender: Any) {
@@ -27,6 +37,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Set the view's delegate
         sceneView.delegate = self
+        // Устанавливаем физический делегат
+        sceneView.scene.physicsWorld.contactDelegate = self
+        
+        // добавляем объекты для стрельбы
+        addTargetNodes()
+        
+        // запуск фоновой музыки
+        playBackgroundMusic()
+        
+        // запуск таймера
+        runTimer()
         
         // Show statistics such as fps and timing information
 //        sceneView.showsStatistics = true
@@ -49,6 +70,113 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Pause the view's session
         sceneView.session.pause()
     }
+    
+    // MARK: - Maths
+    func getUserVector() -> (SCNVector3, SCNVector3) {
+        if let frame = self.sceneView.session.currentFrame {
+            // матрица преобразования 4х4
+            let mat = SCNMatrix4(frame.camera.transform)
+            // ориентация камеры в пространсве
+            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+            // расположение камеры
+            let pos = SCNVector3(mat.m41, mat.m42, mat.m43)
+            return(dir, pos)
+        }
+        return(SCNVector3(0, 0, -1), SCNVector3(0, 0, -0.2))
+    }
+    
+    // MARK: - Создание ракет
+    func createMissile(type: String) -> SCNNode {
+        var node = SCNNode()
+        // использование оператора case для изменения масштаба и поворота
+        switch type {
+        case "banana":
+            let scene = SCNScene(named: "art.scnassets/banana.dae")
+            node = (scene?.rootNode.childNode(withName: "Cube_001", recursively: true)!)!
+            //размер модели
+            node.scale = SCNVector3(0.2, 0.2, 0.2)
+            node.name = "banana"
+        case "axe":
+            let scene = SCNScene(named: "art.scnassets/axe.dae")
+            node = (scene?.rootNode.childNode(withName: "axe", recursively: true)!)!
+            node.scale = SCNVector3(0.3, 0.3, 0.3)
+            node.name = "bathtub"
+        default:
+            node = SCNNode()
+        }
+        
+        node.physicsBody?.categoryBitMask = CollisionCategory.missileCategory.rawValue
+        node.physicsBody?.collisionBitMask = CollisionCategory.targetCategory.rawValue
+        
+        return node
+    }
+    
+    func fireMissile(type: String) {
+        var node = SCNNode()
+        node = createMissile(type: type)
+        // позиция и направление пользователя
+        let (direction, position) = self.getUserVector()
+        node.position = position
+        var nodeDirection = SCNVector3()
+        
+        switch type {
+        case "banana":
+            // напрвление и скорость ракеты
+            nodeDirection = SCNVector3(direction.x * 4, direction.y * 4, direction.z * 4)
+            node.physicsBody?.applyForce(nodeDirection, at: SCNVector3(0.1, 0, 0), asImpulse: true)
+            playSound(sound: "monkey", format: "mp3")
+        case "axe":
+            nodeDirection = SCNVector3(direction.x * 4, direction.y * 4, direction.z * 4)
+            node.physicsBody?.applyForce(SCNVector3(direction.x, direction.y, direction.y), at: SCNVector3(0, 0, 0.1), asImpulse: true)
+            playSound(sound: "rooster", format: "mp3")
+        default:
+            nodeDirection = direction
+        }
+        
+        node.physicsBody?.applyForce(nodeDirection, asImpulse: true)
+        sceneView.scene.rootNode.addChildNode(node)
+    }
+    
+    // MARK: - Объекты для стрельбы
+    func addTargetNodes() {
+        for index in 1...100 {
+            var node = SCNNode()
+            
+            if (index > 9) && (index % 10 == 0) {
+                let scene = SCNScene(named: "art.scnassets/mouthshark.dae")
+                node = (scene?.rootNode.childNode(withName: "shark", recursively: true)!)!
+                node.scale = SCNVector3(0.3, 0.3, 0.3)
+                node.name = "shark"
+            } else {
+                let scene = SCNScene(named: "art.scnassets/bath.dae")
+                node = (scene?.rootNode.childNode(withName: "Cube_001", recursively: true)!)!
+                node.scale = SCNVector3(0.02, 0.02, 0.02)
+                node.name = "bath"
+            }
+            
+            node.physicsBody = SCNPhysicsBody(type: .dynamic, shape: nil)
+            node.physicsBody?.isAffectedByGravity = false
+            
+            // рамещение случайным образом
+            node.position = SCNVector3(randomFloat(min: -10, max: 10), randomFloat(min: -4, max: 5), randomFloat(min: -10, max: 10))
+            
+            // повернуть
+            let action: SCNAction = SCNAction.rotate(by: .pi, around: SCNVector3(0, 1, 0), duration: 1.0)
+            let forever = SCNAction.repeatForever(action)
+            node.runAction(forever)
+            
+            node.physicsBody?.categoryBitMask = CollisionCategory.targetCategory.rawValue
+            node.physicsBody?.contactTestBitMask = CollisionCategory.missileCategory.rawValue
+            
+            // добавить в сцену
+            sceneView.scene.rootNode.addChildNode(node)
+        }
+    }
+    
+    func randomFloat(min: Float, max: Float) -> Float {
+        return (Float(arc4random()) / 0xFFFFFFFF) * (max - min) + min
+    }
+    
 
     // MARK: - ARSCNViewDelegate
     
@@ -75,4 +203,97 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
         
     }
+}
+
+// MARK: - Contact Delegate
+extension ViewController {
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        print("** Collision!! " + contact.nodeA.name! + " hit " + contact.nodeB.name!)
+        
+        if contact.nodeA.physicsBody?.contactTestBitMask == CollisionCategory.targetCategory.rawValue ||
+        contact.nodeB.physicsBody?.categoryBitMask == CollisionCategory.targetCategory.rawValue {
+            if (contact.nodeA.name! == "shark" || contact.nodeB.name! == "shark") {
+                score += 5
+            } else {
+                score += 1
+            }
+            
+            DispatchQueue.main.async {
+                contact.nodeA.removeFromParentNode()
+                contact.nodeB.removeFromParentNode()
+                //self.scoreLabel.text = String(self.score)
+            }
+        }
+        
+        playSound(sound: "explosion", format: "wav")
+        
+        let explosion = SCNParticleSystem(named: "Explode", inDirectory: nil)
+        contact.nodeB.addParticleSystem(explosion!)
+    }
+}
+
+// MARK: - Sounds
+extension ViewController {
+    func playSound(sound: String, format: String) {
+        guard let url = Bundle.main.url(forResource: sound, withExtension: format) else { return }
+        do {
+            try! AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+            try! AVAudioSession.sharedInstance().setActive(true)
+            
+            player = try! AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
+            
+            guard let player = player else { return }
+            player.play()
+        } catch let error {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func playBackgroundMusic() {
+        let audioNode = SCNNode()
+        let audioSource = SCNAudioSource(fileNamed: "overtake.mp3")!
+        let audioPlayer = SCNAudioPlayer(source: audioSource)
+        
+        audioNode.addAudioPlayer(audioPlayer)
+        
+        let play = SCNAction.playAudio(audioSource, waitForCompletion: true)
+        audioNode.runAction(play)
+        sceneView.scene.rootNode.addChildNode(audioNode)
+    }
+}
+
+// MARK: - Timer
+extension ViewController {
+    func runTimer() {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+    }
+    
+    @objc func updateTimer() {
+        if seconds == 0 {
+            timer.invalidate()
+            gameOver()
+        } else {
+            seconds -= 1
+            timerLabel.text = "\(seconds)"
+        }
+    }
+    
+    func resetTimer() {
+        timer.invalidate()
+        seconds = 60
+        timerLabel.text = "\(seconds)"
+    }
+    
+    func gameOver() {
+        let defaults = UserDefaults.standard
+        defaults.set(score, forKey: "score")
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+
+struct CollisionCategory: OptionSet {
+    let rawValue: Int
+    static let missileCategory = CollisionCategory(rawValue: 1 << 0)
+    static let targetCategory = CollisionCategory(rawValue: 1 << 1)
 }

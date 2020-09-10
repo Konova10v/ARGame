@@ -13,6 +13,14 @@
 		6E6BCB30250658B500233CCD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB2E250658B500233CCD /* Main.storyboard */; };
 		6E6BCB32250658B900233CCD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB31250658B900233CCD /* Assets.xcassets */; };
 		6E6BCB35250658B900233CCD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB33250658B900233CCD /* LaunchScreen.storyboard */; };
+		6E6BCB42250A241400233CCD /* rooster.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB3D250A241400233CCD /* rooster.mp3 */; };
+		6E6BCB43250A241400233CCD /* monkey.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB3E250A241400233CCD /* monkey.mp3 */; };
+		6E6BCB44250A241400233CCD /* explosion.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB3F250A241400233CCD /* explosion.wav */; };
+		6E6BCB45250A241400233CCD /* watersplash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB40250A241400233CCD /* watersplash.wav */; };
+		6E6BCB46250A241400233CCD /* overtake.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB41250A241400233CCD /* overtake.mp3 */; };
+		6E6BCB4A250A287300233CCD /* Explode.scnp in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB48250A287300233CCD /* Explode.scnp */; };
+		6E6BCB4B250A287300233CCD /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 6E6BCB49250A287300233CCD /* spark.png */; };
+		6E6BCB4F250A302F00233CCD /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6BCB4E250A302F00233CCD /* HomeViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +32,14 @@
 		6E6BCB31250658B900233CCD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6E6BCB34250658B900233CCD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6E6BCB36250658B900233CCD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E6BCB3D250A241400233CCD /* rooster.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = rooster.mp3; path = ../../../Sounds/rooster.mp3; sourceTree = "<group>"; };
+		6E6BCB3E250A241400233CCD /* monkey.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = monkey.mp3; path = ../../../Sounds/monkey.mp3; sourceTree = "<group>"; };
+		6E6BCB3F250A241400233CCD /* explosion.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = explosion.wav; path = ../../../Sounds/explosion.wav; sourceTree = "<group>"; };
+		6E6BCB40250A241400233CCD /* watersplash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = watersplash.wav; path = ../../../Sounds/watersplash.wav; sourceTree = "<group>"; };
+		6E6BCB41250A241400233CCD /* overtake.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = overtake.mp3; path = ../../../Sounds/overtake.mp3; sourceTree = "<group>"; };
+		6E6BCB48250A287300233CCD /* Explode.scnp */ = {isa = PBXFileReference; lastKnownFileType = file.scp; name = Explode.scnp; path = ../../../Particles/Explode.scnp; sourceTree = "<group>"; };
+		6E6BCB49250A287300233CCD /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../../../Particles/spark.png; sourceTree = "<group>"; };
+		6E6BCB4E250A302F00233CCD /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,8 +72,11 @@
 		6E6BCB27250658B500233CCD /* ARGame */ = {
 			isa = PBXGroup;
 			children = (
+				6E6BCB47250A286300233CCD /* Particles */,
+				6E6BCB3C250A23C000233CCD /* Sounds */,
 				6E6BCB28250658B500233CCD /* AppDelegate.swift */,
 				6E6BCB2A250658B500233CCD /* art.scnassets */,
+				6E6BCB4E250A302F00233CCD /* HomeViewController.swift */,
 				6E6BCB2C250658B500233CCD /* ViewController.swift */,
 				6E6BCB2E250658B500233CCD /* Main.storyboard */,
 				6E6BCB31250658B900233CCD /* Assets.xcassets */,
@@ -65,6 +84,27 @@
 				6E6BCB36250658B900233CCD /* Info.plist */,
 			);
 			path = ARGame;
+			sourceTree = "<group>";
+		};
+		6E6BCB3C250A23C000233CCD /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				6E6BCB3F250A241400233CCD /* explosion.wav */,
+				6E6BCB3E250A241400233CCD /* monkey.mp3 */,
+				6E6BCB41250A241400233CCD /* overtake.mp3 */,
+				6E6BCB3D250A241400233CCD /* rooster.mp3 */,
+				6E6BCB40250A241400233CCD /* watersplash.wav */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
+		6E6BCB47250A286300233CCD /* Particles */ = {
+			isa = PBXGroup;
+			children = (
+				6E6BCB48250A287300233CCD /* Explode.scnp */,
+				6E6BCB49250A287300233CCD /* spark.png */,
+			);
+			path = Particles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,8 +165,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E6BCB4B250A287300233CCD /* spark.png in Resources */,
 				6E6BCB2B250658B500233CCD /* art.scnassets in Resources */,
+				6E6BCB4A250A287300233CCD /* Explode.scnp in Resources */,
+				6E6BCB45250A241400233CCD /* watersplash.wav in Resources */,
 				6E6BCB35250658B900233CCD /* LaunchScreen.storyboard in Resources */,
+				6E6BCB44250A241400233CCD /* explosion.wav in Resources */,
+				6E6BCB42250A241400233CCD /* rooster.mp3 in Resources */,
+				6E6BCB46250A241400233CCD /* overtake.mp3 in Resources */,
+				6E6BCB43250A241400233CCD /* monkey.mp3 in Resources */,
 				6E6BCB32250658B900233CCD /* Assets.xcassets in Resources */,
 				6E6BCB30250658B500233CCD /* Main.storyboard in Resources */,
 			);
@@ -141,6 +188,7 @@
 			files = (
 				6E6BCB2D250658B500233CCD /* ViewController.swift in Sources */,
 				6E6BCB29250658B500233CCD /* AppDelegate.swift in Sources */,
+				6E6BCB4F250A302F00233CCD /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
